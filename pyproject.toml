@@ -7,7 +7,7 @@ authors = [
     { name = "benj9000", email = "49900294+benj9000@users.noreply.github.com" },
 ]
 requires-python = ">=3.14"
-dependencies = []
+dependencies = ["beautifulsoup4>=4.13.3", "requests>=2.32.3"]
 
 [project.scripts]
 html-elements-showcase = "html_elements_showcase:main"
