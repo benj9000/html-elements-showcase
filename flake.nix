@@ -20,7 +20,11 @@
           let venvDirectory = "venv"; in
           pkgs.mkShell {
             name = "python-uv-development-environment";
-            nativeBuildInputs = [ pythonPackage pkgs.uv ];
+            nativeBuildInputs = [
+              pythonPackage
+              pkgs.uv
+              pkgs.ruff
+            ];
             UV_PROJECT_ENVIRONMENT = venvDirectory;
             UV_PYTHON_DOWNLOADS = "never";
             shellHook = ''
