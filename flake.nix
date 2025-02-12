@@ -23,6 +23,7 @@
             nativeBuildInputs = [
               pythonPackage
               pkgs.uv
+              pkgs.basedpyright
               pkgs.ruff
             ];
             UV_PROJECT_ENVIRONMENT = venvDirectory;

@@ -15,3 +15,8 @@ html-elements-showcase = "html_elements_showcase:main"
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.basedpyright]
+venvPath = "."
+venv = "venv"
+include = ["./src"]
