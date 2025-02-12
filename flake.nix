@@ -25,6 +25,7 @@
               pkgs.uv
               pkgs.basedpyright
               pkgs.ruff
+              pkgs.nodePackages.prettier
             ];
             UV_PROJECT_ENVIRONMENT = venvDirectory;
             UV_PYTHON_DOWNLOADS = "never";
