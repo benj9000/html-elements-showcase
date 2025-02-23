@@ -1,4 +1,4 @@
-from html_elements_showcase.data_transfer_objects import (
+from html_elements_showcase.dtos import (
     ElementTemplateData,
     SectionParseResult,
     SectionTemplateData,

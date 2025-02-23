@@ -8,7 +8,7 @@ from html_elements_showcase.configuration import (
     PROJECT_AUTHOR,
     PROJECT_NAME,
 )
-from html_elements_showcase.data_transfer_objects import SectionTemplateData
+from html_elements_showcase.dtos import SectionTemplateData
 
 
 def render(sections: list[SectionTemplateData]) -> str:

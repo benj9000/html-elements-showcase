@@ -1,9 +1,6 @@
 import re
 
-from html_elements_showcase.data_transfer_objects import (
-    ElementParseResult,
-    SectionParseResult,
-)
+from html_elements_showcase.dtos import ElementParseResult, SectionParseResult
 
 
 def _remove_angle_brackets(string: str) -> str:

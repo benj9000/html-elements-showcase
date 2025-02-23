@@ -1,10 +1,7 @@
 from bs4 import BeautifulSoup
 from bs4.element import ResultSet, Tag
 
-from html_elements_showcase.data_transfer_objects import (
-    ElementParseResult,
-    SectionParseResult,
-)
+from html_elements_showcase.dtos import ElementParseResult, SectionParseResult
 
 
 def _get_article_tag_from_page_source(page_source: str) -> Tag:
