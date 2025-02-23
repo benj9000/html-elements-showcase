@@ -5,5 +5,8 @@ venv/
 # Compiled bytecode.
 __pycache__/
 # Build artifacts.
-dist/
+dist/*
+!dist/.gitkeep
 *.egg-info/
+# Cached data.
+data/mdn-html-elements-reference.html
