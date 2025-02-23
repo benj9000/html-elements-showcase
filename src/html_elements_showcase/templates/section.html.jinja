@@ -1,0 +1,16 @@
+<section>
+  <h2>{{ section.headline }}</h2>
+
+  {% if section.description %}
+    {{ section.description }}
+  {% endif %}
+
+  {% for element in section.elements %}
+    <h3>{{ element.name }}</h3>
+    <p>{{ element.description }}</p>
+    {% if element.example %}
+      <h4>Example(s)</h4>
+      <div>{{ element.example|safe }}</div>
+    {% endif %}
+  {% endfor %}
+</section>
