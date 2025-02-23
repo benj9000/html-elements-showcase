@@ -20,13 +20,40 @@
           let venvDirectory = "venv"; in
           pkgs.mkShell {
             name = "python-uv-development-environment";
-            nativeBuildInputs = [
-              pythonPackage
-              pkgs.uv
-              pkgs.basedpyright
-              pkgs.ruff
-              pkgs.nodePackages.prettier
-            ];
+            nativeBuildInputs =
+              let
+                prettierPluginJinjaTemplate = pkgs.buildNpmPackage rec {
+                  pname = "prettier-plugin-jinja-template";
+                  version = "v2.0.0";
+                  src = pkgs.fetchFromGitHub {
+                    owner = "davidodenwald";
+                    repo = pname;
+                    rev = version;
+                    hash = "sha256-5xPR305Ux0SFhoBFJ3XdlOY2PqtAqZn1PQAy38HCJss=";
+                  };
+                  npmDepsHash = "sha256-dlQkvji36Za86lAt5ds8nphDnu2uA28tNZqZKzt2o5A=";
+                  dontNpmPrune = true;
+                };
+
+                prettierWithPlugins = pkgs.symlinkJoin {
+                  name = "prettier-with-plugins";
+                  paths = [ pkgs.nodePackages.prettier ];
+                  buildInputs = [ pkgs.makeWrapper ];
+                  postBuild = ''
+                    wrapProgram "$out/bin/prettier" \
+                      --add-flags "--plugin=${prettierPluginJinjaTemplate}/lib/node_modules/prettier-plugin-jinja-template/lib/index.js" \
+                      --add-flags "--print-width 100"
+                  '';
+                };
+              in
+              [
+                pythonPackage
+                pkgs.uv
+                pkgs.basedpyright
+                pkgs.ruff
+                prettierWithPlugins
+              ];
+
             UV_PROJECT_ENVIRONMENT = venvDirectory;
             UV_PYTHON_DOWNLOADS = "never";
             shellHook = ''
