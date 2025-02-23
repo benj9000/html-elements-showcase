@@ -3,6 +3,7 @@ from html_elements_showcase.data_transfer_objects import (
     SectionParseResult,
     SectionTemplateData,
 )
+from html_elements_showcase.fetch import fetch_example
 from html_elements_showcase.sanitize import sanitize_section
 
 
@@ -15,7 +16,9 @@ def _section_parse_result_to_section_template_data(
     for element_parse_result in sanitized_section_parse_result.elements:
         element_template_data.append(
             ElementTemplateData(
-                element_parse_result.name, element_parse_result.description, None
+                element_parse_result.name,
+                element_parse_result.description,
+                fetch_example(element_parse_result.name),
             )
         )
     return SectionTemplateData(
