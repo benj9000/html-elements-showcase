@@ -89,11 +89,16 @@
             UV_PYTHON_DOWNLOADS = "never";
 
             shellHook = ''
-              echo "Start Python development environment with uv"
               uv sync --python ${pythonPackage}/bin/python
               if [ -d ${venvDirectory} ]; then
                   source ${venvDirectory}/bin/activate
               fi
+
+              bold="$(tput bold)"
+              normal="$(tput sgr0)"
+              echo
+              echo "Development shell for ''${bold}${projectName}''${normal}."
+              echo
             '';
           };
       in
