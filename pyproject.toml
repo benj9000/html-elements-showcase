@@ -3,6 +3,8 @@ name = "html-elements-showcase"
 version = "0.1.0"
 description = "A showcase of HTML elements"
 readme = "README.md"
+license = "GPL-3.0-or-later"
+license-files = ["LICENSE.md"]
 authors = [
     { name = "benj9000", email = "49900294+benj9000@users.noreply.github.com" },
 ]
