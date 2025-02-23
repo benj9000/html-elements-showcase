@@ -1,3 +1,5 @@
+# Default direnv environment location.
+.direnv/
 # Virtual environment.
 venv/
 # Compiled bytecode.
