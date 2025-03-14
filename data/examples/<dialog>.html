@@ -1,0 +1,17 @@
+<dialog data-js="dialog">
+  <p>Dialog</p>
+  <button data-js="dialog-button-close">Close</button>
+</dialog>
+
+<button data-js="dialog-button">Show dialog</button>
+<button data-js="dialog-button-modal">Show modal dialog</button>
+
+<script>
+  const dialog = document.querySelector("[data-js='dialog'");
+  const buttonDialog = document.querySelector("[data-js='dialog-button'");
+  const buttonDialogModal = document.querySelector("[data-js='dialog-button-modal'");
+  const buttonClose = dialog.querySelector("[data-js='dialog-button-close'");
+  buttonDialog.addEventListener("click", () => dialog.show());
+  buttonDialogModal.addEventListener("click", () => dialog.showModal());
+  buttonClose.addEventListener("click", () => dialog.close());
+</script>
