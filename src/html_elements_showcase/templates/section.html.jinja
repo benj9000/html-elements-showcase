@@ -12,5 +12,6 @@
       <h4>Example(s)</h4>
       <div>{{ element.example|safe }}</div>
     {% endif %}
+    {% if not loop.last %}<hr />{% endif %}
   {% endfor %}
 </section>

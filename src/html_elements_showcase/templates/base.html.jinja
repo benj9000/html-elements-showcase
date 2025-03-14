@@ -12,13 +12,19 @@
   <body>
     <header><h1>{{ title }}</h1></header>
     <hr />
+    <hr />
     <main>
       <article>
         {% for section in sections %}
           {% include "section.html.jinja" %}
+          {% if not loop.last %}
+            <hr />
+            <hr />
+          {% endif %}
         {% endfor %}
       </article>
     </main>
+    <hr />
     <hr />
     <footer>{% include "attribution.html.jinja" %}</footer>
   </body>
