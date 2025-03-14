@@ -10,6 +10,11 @@
     <p>{{ element.description }}</p>
     {% if element.example %}
       <h4>Example(s)</h4>
+      <div>
+        <h5>Code</h5>
+        <pre>{{ element.example }}</pre>
+      </div>
+      <h5>Output</h5>
       <div>{{ element.example|safe }}</div>
     {% endif %}
     {% if not loop.last %}<hr />{% endif %}
