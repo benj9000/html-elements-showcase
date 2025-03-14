@@ -1,9 +1,6 @@
-from pathlib import Path
-
 from jinja2 import Environment, PackageLoader, Template
 
 from html_elements_showcase.configuration import (
-    DIST_DIRECTORY,
     MDN_HTML_ELEMENTS_REFERENCE_URL,
     PROJECT_AUTHOR,
     PROJECT_NAME,
@@ -24,9 +21,3 @@ def render(sections: list[SectionTemplateData]) -> str:
         "attribution_url": MDN_HTML_ELEMENTS_REFERENCE_URL,
     }
     return template.render(context)
-
-
-def write(content: str, filename: str = "index.html"):
-    filepath: Path = DIST_DIRECTORY / filename
-    _: int = filepath.write_text(content, encoding="utf-8")
-    print(f"The rendered page has been written to {filepath.resolve()}.")
