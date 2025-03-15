@@ -8,16 +8,21 @@ concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: true
 
+env:
+  RELEASE_FILENAME: html-elements-showcase.zip
+
 jobs:
   build:
     permissions:
-      contents: read
+      contents: write
     runs-on: ubuntu-latest
+    env:
+      OUTPUT_DIRECTORY_NAME: ./dist
     steps:
       - uses: actions/checkout@v4
 
       - name: Clean output directory in repository
-        run: rm ./dist/.gitkeep
+        run: rm "$OUTPUT_DIRECTORY_NAME/.gitkeep"
 
       - name: Install uv
         uses: astral-sh/setup-uv@v5
@@ -29,11 +34,30 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           name: github-pages
-          path: dist/
+          path: ${{ env.OUTPUT_DIRECTORY_NAME }}/
+
+      - name: Zip output for GitHub release
+        run: (cd "$OUTPUT_DIRECTORY_NAME" && zip -r "../$RELEASE_FILENAME" .)
+
+      - name: Upload zipped output as artifact for a GitHub release
+        uses: actions/upload-artifact@v4
+        with:
+          name: github-release
+          path: ${{ env.RELEASE_FILENAME }}
+          if-no-files-found: error
+          retention-days: 1
+
+      - name: Update git tag for continuous-release
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git tag -f continuous-release
+          git push -f origin continuous-release
 
   deploy:
     needs: build
     permissions:
+      contents: write
       id-token: write
       pages: write
     environment:
@@ -43,3 +67,20 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
+
+      - name: Download artifact for GitHub release
+        uses: actions/download-artifact@v4
+        with:
+          name: github-release
+
+      - name: Deploy GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: continuous-release
+          name: "Continuous release (${{ github.event.head_commit.timestamp }})"
+          body: |
+            This is an automatically updated release containing the generated files based on the latest commit.
+
+            Commit: ${{ github.event.head_commit.id }}
+            Commit date and time: ${{ github.event.head_commit.timestamp }}
+          files: ${{ env.RELEASE_FILENAME }}
