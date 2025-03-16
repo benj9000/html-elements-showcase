@@ -3,8 +3,8 @@ from pathlib import Path
 
 from html_elements_showcase.configuration import (
     EXAMPLE_ASSETS_DIRECTORY,
-    OUTPUT_ASSETS_DIRECTORY,
     OUTPUT_DIRECTORY,
+    OUTPUT_NAME,
 )
 from html_elements_showcase.dtos import SectionParseResult, SectionTemplateData
 from html_elements_showcase.fetch import fetch_page_source, fetch_page_source_debug
@@ -13,34 +13,30 @@ from html_elements_showcase.render import render
 from html_elements_showcase.transfer import parse_result_to_template_data
 
 
-def _write_page(content: str, destination: Path, filename: str = "index.html") -> None:
-    filepath: Path = destination / filename
-    _: int = filepath.write_text(content, encoding="utf-8")
-    print(f"The rendered page has been written to {filepath.resolve()}.")
+def _prepare_output_directory(directory: Path, debug: bool) -> None:
+    _validate_output_directory(directory)
+    if not _is_output_directory_clean(directory):
+        if debug:
+            _clean_output_directory(directory)
+        else:
+            raise ValueError(f"The output directory {directory} is not clean.")
 
 
-def _copy_assets(source: Path, destination: Path) -> None:
-    destination.mkdir()
-    for file in source.iterdir():
-        shutil.copy(file, destination)
-
-
-def _is_output_directory_empty(directory: Path) -> bool:
+def _validate_output_directory(directory: Path) -> None:
     if not directory.exists():
-        raise ValueError("Directory does not exist.")
-    if directory.is_file():
-        raise ValueError("Directory is actually a file.")
+        raise FileNotFoundError(f"The output directory {directory} does not exist.")
+    if not directory.is_dir():
+        raise NotADirectoryError(
+            f"The output directory {directory} is not a directory."
+        )
 
+
+def _is_output_directory_clean(directory: Path) -> bool:
     directory_content: list[Path] = list(directory.glob("*"))
     return len(directory_content) == 1 and directory_content[0].name == ".gitkeep"
 
 
 def _clean_output_directory(directory: Path) -> None:
-    if not directory.exists():
-        raise FileNotFoundError(f"Directory {directory} does not exist.")
-    if not directory.is_dir():
-        raise NotADirectoryError(f"{directory} is not a directory.")
-
     for path in directory.iterdir():
         if path.name == ".gitkeep":
             continue
@@ -51,22 +47,41 @@ def _clean_output_directory(directory: Path) -> None:
             path.unlink()
 
 
-def build(debug: bool) -> None:
-    if not _is_output_directory_empty(OUTPUT_DIRECTORY):
-        if debug:
-            _clean_output_directory(OUTPUT_DIRECTORY)
-        else:
-            raise ValueError(f"The output directory ({OUTPUT_DIRECTORY}) is not empty.")
-
-    page_source: str
+def _fetch_page_source(debug: bool) -> str:
     if debug:
-        page_source = fetch_page_source_debug()
+        return fetch_page_source_debug()
     else:
-        page_source = fetch_page_source()
+        return fetch_page_source()
 
+
+def _process_page_source(page_source: str) -> str:
     sections: list[SectionParseResult] = parse(page_source)
     template_data: list[SectionTemplateData] = parse_result_to_template_data(sections)
-    content: str = render(template_data)
+    return render(template_data)
 
-    _write_page(content, OUTPUT_DIRECTORY)
-    _copy_assets(EXAMPLE_ASSETS_DIRECTORY, OUTPUT_ASSETS_DIRECTORY)
+
+def _write_output(
+    output_directory: Path,
+    output_name: str,
+    output_content: str,
+    example_assets_directory: Path,
+) -> None:
+    output_subdirectory: Path = output_directory / output_name
+    output_subdirectory.mkdir()
+    _write_page(output_content, output_subdirectory)
+    shutil.copytree(example_assets_directory, output_subdirectory / "assets")
+
+
+def _write_page(content: str, destination: Path, filename: str = "index.html") -> None:
+    filepath: Path = destination / filename
+    _: int = filepath.write_text(content, encoding="utf-8")
+    print(f"The rendered page has been written to {filepath.resolve()}.")
+
+
+def build(debug: bool) -> None:
+    _prepare_output_directory(OUTPUT_DIRECTORY, debug)
+    page_source: str = _fetch_page_source(debug)
+    output_page_source: str = _process_page_source(page_source)
+    _write_output(
+        OUTPUT_DIRECTORY, OUTPUT_NAME, output_page_source, EXAMPLE_ASSETS_DIRECTORY
+    )

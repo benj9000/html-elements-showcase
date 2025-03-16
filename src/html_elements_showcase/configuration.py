@@ -10,7 +10,7 @@ EXAMPLES_DIRECTORY: Path = DATA_DIRECTORY / "examples"
 EXAMPLE_ASSETS_DIRECTORY: Path = EXAMPLES_DIRECTORY / "assets"
 
 OUTPUT_DIRECTORY: Path = PROJECT_ROOT / "dist"
-OUTPUT_ASSETS_DIRECTORY: Path = OUTPUT_DIRECTORY / "assets"
+OUTPUT_NAME: str = "html-elements-showcase"
 
 MDN_HTML_ELEMENTS_REFERENCE_URL: str = (
     "https://developer.mozilla.org/en-US/docs/Web/HTML/Element"

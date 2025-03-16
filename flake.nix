@@ -21,7 +21,7 @@
           let
             projectName = "html-element-showcase";
             venvDirectory = "./venv";
-            outputDirectory = "./dist";
+            directoryToLiveServe = "./dist/html-elements-showcase";
           in
           pkgs.mkShell {
             name = "python-uv-development-environment";
@@ -57,13 +57,13 @@
                     let
                       liveServerTmuxSessionName = "live server (${projectName})";
                       startLiveServerScript = pkgs.writeShellScriptBin "start-live-server" ''
-                        if [ ! -d ${outputDirectory} ]; then
+                        if [ ! -d ${directoryToLiveServe} ]; then
                             echo "Could not detect the directory to serve."
                             echo "Make sure to call this command from within the project's root directory."
                             exit 1
                         fi
                         ${pkgs.tmux}/bin/tmux new-session -s "${liveServerTmuxSessionName}" -d \
-                            "${pkgs.nodePackages.live-server}/bin/live-server ${outputDirectory}"
+                            "${pkgs.nodePackages.live-server}/bin/live-server ${directoryToLiveServe}"
                       '';
                       stopLiveServerScript = pkgs.writeShellScriptBin "stop-live-server" ''
                         ${pkgs.tmux}/bin/tmux kill-session -t "${liveServerTmuxSessionName}"
