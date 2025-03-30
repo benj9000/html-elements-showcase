@@ -18,15 +18,18 @@
         projectName = pyproject.pyproject.project.name;
 
         pkgs = nixpkgs.legacyPackages.${system};
-        pythonVersions = {
-          default = pkgs.python314;
-          python312 = pkgs.python312;
-          python313 = pkgs.python313;
-          python314 = pkgs.python314;
+        defaultPythonPackage = pkgs.python314;
+        pythonPackages = {
+          default = defaultPythonPackage;
+          "${projectName}" = defaultPythonPackage;
+          "${projectName}-py312" = pkgs.python312;
+          "${projectName}-py313" = pkgs.python313;
+          "${projectName}-py314" = pkgs.python314;
         };
 
         mkPythonShell = devShellName: pythonPackage:
           let
+            pyprojectToml = "./pyproject.toml";
             venvDirectory = "./venv";
             directoryToLiveServe = "./dist/html-elements-showcase";
           in
@@ -81,7 +84,6 @@
                     in
                     [ startLiveServerScript stopLiveServerScript showLiveServerScript ];
                 };
-
               in
               [
                 pythonPackage
@@ -92,25 +94,21 @@
                 liveServerScripts
               ];
 
-            UV_PROJECT_ENVIRONMENT = venvDirectory;
-            UV_PYTHON_DOWNLOADS = "never";
+            env = {
+              UV_PROJECT_ENVIRONMENT = venvDirectory;
+              UV_PYTHON = pythonPackage.interpreter;
+              UV_PYTHON_DOWNLOADS = "never";
+            };
 
             shellHook = ''
-              uv sync --python ${pythonPackage}/bin/python
-              if [ -d ${venvDirectory} ]; then
-                  source ${venvDirectory}/bin/activate
-              fi
-
-              bold="$(tput bold)"
-              normal="$(tput sgr0)"
-              echo
-              echo "Development shell for ''${bold}${projectName}''${normal}."
-              echo
+              unset PYTHONPATH
+              [ -f "${pyprojectToml}" ] && uv sync
+              [ -d "${venvDirectory}" ] && source "${venvDirectory}/bin/activate"
             '';
           };
       in
       {
-        devShells = builtins.mapAttrs mkPythonShell pythonVersions;
+        devShells = builtins.mapAttrs mkPythonShell pythonPackages;
       }
     );
 }
