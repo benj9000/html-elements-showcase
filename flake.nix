@@ -18,7 +18,7 @@
         projectName = pyproject.pyproject.project.name;
 
         pkgs = nixpkgs.legacyPackages.${system};
-        defaultPythonPackage = pkgs.python314;
+        defaultPythonPackage = pkgs.python313;
         pythonPackages = {
           default = defaultPythonPackage;
           "${projectName}" = defaultPythonPackage;
