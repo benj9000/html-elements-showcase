@@ -4,11 +4,19 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
+    pyproject-nix = {
+      url = "github:pyproject-nix/pyproject.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, flake-utils }:
+  outputs = { self, nixpkgs, flake-utils, pyproject-nix }:
     flake-utils.lib.eachDefaultSystem (system:
       let
+        src = ./.;
+        pyproject = pyproject-nix.lib.project.loadUVPyproject { projectRoot = src; };
+        projectName = pyproject.pyproject.project.name;
+
         pkgs = nixpkgs.legacyPackages.${system};
         pythonVersions = {
           default = pkgs.python314;
@@ -19,12 +27,11 @@
 
         mkPythonShell = devShellName: pythonPackage:
           let
-            projectName = "html-element-showcase";
             venvDirectory = "./venv";
             directoryToLiveServe = "./dist/html-elements-showcase";
           in
           pkgs.mkShell {
-            name = "python-uv-development-environment";
+            name = "${projectName}-development-environment";
             nativeBuildInputs =
               let
                 prettierPluginJinjaTemplate = pkgs.buildNpmPackage rec {
