@@ -19,6 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       HES_OUT_DIR: ./dist
+      HES_DEBUG: 0
     steps:
       - uses: actions/checkout@v4
 
