@@ -4,9 +4,14 @@ import requests
 
 from html_elements_showcase.configuration import Location, Source
 
+PAGE_SOURCE_ENCODING: str = "utf-8"
+
 
 def fetch_page_source() -> str:
-    return requests.get(Source.MDN_HTML_ELEMENTS_REFERENCE_URL.value).text
+    response = requests.get(Source.MDN_HTML_ELEMENTS_REFERENCE_URL.value)
+    # The encoding is not detected correctly automatically, such that we have to set it explicitly.
+    response.encoding = PAGE_SOURCE_ENCODING
+    return response.text
 
 
 def fetch_page_source_debug() -> str:
@@ -14,7 +19,7 @@ def fetch_page_source_debug() -> str:
     if not Location.SOURCE_CACHE_FILE.value.exists():
         page_source = fetch_page_source()
         _: int = Location.SOURCE_CACHE_FILE.value.write_text(
-            page_source, encoding="utf-8"
+            page_source, encoding=PAGE_SOURCE_ENCODING
         )
     else:
         page_source = Location.SOURCE_CACHE_FILE.value.read_text()
