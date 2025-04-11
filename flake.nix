@@ -103,6 +103,8 @@
 
             shellHook = ''
               unset PYTHONPATH
+              export HES_DEBUG=1
+              export HES_OUT_DIR="$(${pkgs.coreutils}/bin/realpath ${outputDirectory})"
               [ -f "${pyprojectToml}" ] && uv sync
               [ -d "${venvDirectory}" ] && source "${venvDirectory}/bin/activate"
             '';

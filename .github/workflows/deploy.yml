@@ -9,6 +9,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
+  PROJECT_NAME: html-elements-showcase
   RELEASE_FILENAME: html-elements-showcase.zip
 
 jobs:
@@ -17,8 +18,7 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
     env:
-      OUTPUT_DIRECTORY: ./dist
-      OUTPUT_NAME: html-elements-showcase
+      HES_OUT_DIR: ./dist
     steps:
       - uses: actions/checkout@v4
 
@@ -32,10 +32,10 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           name: github-pages
-          path: ${{ env.OUTPUT_DIRECTORY }}/${{ env.OUTPUT_NAME }}/
+          path: ${{ env.HES_OUT_DIR }}/${{ env.PROJECT_NAME }}/
 
       - name: Zip output for GitHub release
-        run: (cd "$OUTPUT_DIRECTORY" && zip -r "../$RELEASE_FILENAME" "./$OUTPUT_NAME")
+        run: (cd "$HES_OUT_DIR" && zip -r "../$RELEASE_FILENAME" "./$PROJECT_NAME")
 
       - name: Upload zipped output as artifact for a GitHub release
         uses: actions/upload-artifact@v4

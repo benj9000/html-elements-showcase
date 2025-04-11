@@ -2,9 +2,9 @@ import shutil
 from pathlib import Path
 
 from html_elements_showcase.configuration import (
-    EXAMPLE_ASSETS_DIRECTORY,
-    OUTPUT_DIRECTORY,
-    OUTPUT_NAME,
+    Location,
+    MetaData,
+    get_output_directory,
 )
 from html_elements_showcase.dtos import SectionParseResult, SectionTemplateData
 from html_elements_showcase.fetch import fetch_page_source, fetch_page_source_debug
@@ -79,9 +79,13 @@ def _write_page(content: str, destination: Path, filename: str = "index.html") -
 
 
 def build(debug: bool) -> None:
-    _prepare_output_directory(OUTPUT_DIRECTORY, debug)
+    output_directory: Path = get_output_directory()
+    _prepare_output_directory(output_directory, debug)
     page_source: str = _fetch_page_source(debug)
     output_page_source: str = _process_page_source(page_source)
     _write_output(
-        OUTPUT_DIRECTORY, OUTPUT_NAME, output_page_source, EXAMPLE_ASSETS_DIRECTORY
+        output_directory,
+        MetaData.PROJECT_NAME.value,
+        output_page_source,
+        Location.EXAMPLE_ASSETS_DIRECTORY.value,
     )
